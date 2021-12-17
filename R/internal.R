@@ -253,31 +253,32 @@ elongationqmult <- function(S16, D1, D2, P,
 }
 
 # runSynthesisAnalysis
-#' run the synthesis analysis.
+#' run synthesis analysis.
 #'
-#' run the synthesis analysis.
+#' run synthesis analysis.
 #'
-#' @param fa data frame with isotope intensities for a FA. First two columns
-#' correspond to Compound and Label information.
-#' @param toDo FA to analyse.
+#' @param fadata fadata containing synthesis results.
+#' @param toDo fatty acids to analyse.
 #' @param R2Thr positive numeric between 0 and 1 specifying the minimum R2
 #' allowed for fits.
 #' @param maxiter parameter passed to \link{nls.control}. Positive integer
 #' specifying the maximum number of iterations allowed.
 #' @param maxconvergence positive integer specifying the maximum number of
 #' successes before choosing the winning model.
-#' @param D1 positive numeric between 0 and 1 specifying the contribution of
-#' acetate M+1.
-#' @param D2 positive numeric between 0 and 1 specifying the contribution of
-#' acetate M+2.
-#' @param P overdispersion parameter.
+#' @param D1 positive numeric vector with values between 0 and 1 specifying the
+#' contribution of acetate M+1. If NA it is estimated.
+#' @param D2 positive numeric vector with values between 0 and 1 specifying the
+#' contribution of acetate M+2. If NA it is estimated.
+#' @param P overdispersion parameter. If NA it is estimated (quasi-multinomial
+#' distribution). If set to 0, no overdispersion is assumed (multinomial
+#' distribution).
 #' @param startpoints positive integer specifying the number of starting points
 #' for each parameter to be estimated.
 #' @param parameters parameters to be estimated for each fatty acid. It can be
-#' modified to change them or to add new fatty acids.
+#' modified to change them or to add new fatty acids (adding new rows).
 #' @param verbose print information messages.
 #'
-#' @return Elongation and importation analysis results.
+#' @return De novo-synthesis analysis results.
 #'
 #' @keywords internal
 #'
@@ -309,21 +310,16 @@ runSynthesisAnalysis <- function(fadata, toDo, R2Thr = R2Thr,
     #==========================================================================#
     # Summarize results
     #==========================================================================#
-    # summaries <- lapply(resultsSynth, function(x) sumTable(x[[2]], fadata$metadata$sampletype))
-    # summaryRes <- sapply(names(summaries), function(x){
-    #   colnames(summaries[[x]]) <- paste(x, colnames(summaries[[x]]), sep="")
-    #   return(summaries[x])
-    # })
-    # names(summaryRes) <- names(summaries)
     results <- cbind(FA = rep(toDo, each = ncol(fadata$intensities)),
                              Sample = colnames(fadata$intensities),
                              Group = fadata$metadata$sampletype,
                              do.call(plyr::rbind.fill, lapply(resultsSynth, function(x) x[[1]])))
     predictedValues <- data.frame(do.call(rbind, lapply(resultsSynth, function(x)
       do.call(cbind, lapply(x$models, function(y) if (!any(is.na(y))){predict(y)}else{rep(NA, nrow(x$mid))})))))
-    predictedValues <- cbind(fadata$fattyacids[fadata$fattyacids$Compound %in% toDo,], predictedValues)
-    rownames(predictedValues) <- paste(fadata$fattyacids$Compound[fadata$fattyacids$Compound %in% toDo]
-                                   , "_M+", fadata$fattyacids$Label[fadata$fattyacids$Compound %in% toDo], sep="")
+    compounds <- do.call(rbind, lapply(resultsSynth, function(x) x[[2]][,c("Compound", "Label")]))
+    predictedValues <- cbind(compounds, predictedValues)
+    rownames(predictedValues) <- paste(predictedValues$Compound, "_M+", 
+                                       predictedValues$Label, sep="")
 
     plots <- plotResults(resultsSynth, fadata$metadata$sampletype, toDo)
 
@@ -531,8 +527,7 @@ runElongationAnalysis <- function(fa, M, D1, D2, P, S16, E1, E2, E3, E4, E5, R2T
     if (D2[s]+D1[s]*0.5 >= D2Thr){
       if (!all(resp == rep(0, M+1)) | any(unlist(lapply(SE[2:6], is.na)))){
         model <- tryCatch({estimatePars(formula, gridStart, datanls,
-                                        maxiter = maxiter, 
-                                        maxconvergence = maxconvergence)},
+                                        maxiter = maxiter, maxconvergence=maxconvergence)},
                           error = function(e){NULL})
       } else {
         model <- NULL
@@ -986,6 +981,7 @@ fitSSE <- function(formula, startpars, datanls, control, limitPhi = 0.1) {
 #'
 #' @author M Isabel Alcoriza-Balaguer <maribel_alcoriza@iislafe.es>
 plotDistributions <- function(results, groups, title = ""){
+  
   oldpar <- graphics::par(no.readonly = TRUE)
   on.exit(graphics::par(oldpar, new = FALSE))
   
@@ -1190,8 +1186,9 @@ getSummaryTable <- function(fadata, resultstable,
 #' @author M Isabel Alcoriza-Balaguer <maribel_alcoriza@iislafe.es>
 heatmapResults <- function(toPlot, cols, scale = "none", breaks,
                            nacolor = "grey"){
-  oldpar <- par(no.readonly = TRUE)
-  on.exit(par(oldpar, new = FALSE))
+  
+  oldpar <- graphics::par(no.readonly = TRUE)
+  on.exit(graphics::par(oldpar, new = FALSE))
   
   grDevices::pdf(NULL) # use a pdf NULL device to save plots to an object
   grDevices::dev.control(displaylist = "enable")

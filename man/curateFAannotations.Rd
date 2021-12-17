@@ -4,7 +4,7 @@
 \alias{curateFAannotations}
 \title{Modify FA annotations}
 \usage{
-curateFAannotations(msbatch, faid, dmz = 10, verbose = TRUE)
+curateFAannotations(msbatch, faid, dmz = 10)
 }
 \arguments{
 \item{msbatch}{annotated msbatch.}
@@ -13,8 +13,6 @@ curateFAannotations(msbatch, faid, dmz = 10, verbose = TRUE)
 endRT) containing curated FAs.}
 
 \item{dmz}{mz tolerance in ppm.}
-
-\item{verbose}{print information messages.}
 }
 \value{
 annotated msbatch.
@@ -36,7 +34,6 @@ Modify FA annotations
 }
 \examples{
 \dontrun{
-# from the msbatch obtained using LipidMS R package
 msbatch <- annotateFA(msbatch, dmz = 5)
 
 plots <- plotFA(msbatch, dmz = 10)

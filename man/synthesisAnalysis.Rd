@@ -72,9 +72,9 @@ interval and thus, S and D parameters could be misestimated.
 }
 \examples{
 \donttest{
-ssdata <- dataCorrection(ssexamplefadata, blankgroup = "Blank")
-ssdata <- synthesisAnalysis(ssdata, R2Thr = 0.95, 
-maxiter = 1e3, maxconvergence = 100, startpoints = 5)
+ssdata <- dataCorrection(ssexamplefadata, blankgroup="Blank")
+ssdata <- synthesisAnalysis(ssdata, R2Thr = 0.95, maxiter = 1e3,
+maxconvergence = 100, startpoints = 5)
 }
 
 \dontrun{
@@ -86,8 +86,8 @@ maxconvergence = 100, startpoints = 5)
 # D2 could be set as the one calculated for 13-Glc Control samples to improve
 # the results:
 
-# D2 <- fadata$synthesis$results$D2[examplefadata$synthesis$results$FA == "FA(16:0)"]
-# fadata$synthesis$results$Group[examplefadata$synthesis$results$FA == "FA(16:0)"]
+# D2 <- fadata$synthesis$results$D2[fadata$synthesis$results$FA == "FA(16:0)"]
+# fadata$synthesis$results$Group[fadata$synthesis$results$FA == "FA(16:0)"]
 
 # D2[4:12] <- rep(mean(D2[1:3]))
 

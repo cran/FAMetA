@@ -15,7 +15,6 @@
 #'
 #' @examples
 #' \dontrun{
-#' # from the msbatch obtained using LipidMS R package
 #' msbatch <- annotateFA(msbatch, dmz = 5)
 #' }
 #'
@@ -98,7 +97,6 @@ annotateFA <- function(msbatch,
 #'
 #' @examples
 #' \dontrun{
-#' # from the msbatch obtained using LipidMS R package
 #' msbatch <- annotateFA(msbatch, dmz = 5)
 #'
 #' plots <- plotFA(msbatch, dmz = 10)
@@ -112,10 +110,9 @@ annotateFA <- function(msbatch,
 #'
 #' @author M Isabel Alcoriza-Balaguer <maribel_alcoriza@iislafe.es>
 plotFA <- function(msbatch, dmz, verbose = TRUE){
-  
+
   oldpar <- graphics::par(no.readonly = TRUE)
   on.exit(graphics::par(oldpar, new = FALSE))
-
   #============================================================================#
   # Check arguments
   #============================================================================#
@@ -195,7 +192,7 @@ plotFA <- function(msbatch, dmz, verbose = TRUE){
                  "#44AA99", "#332288", "#AA4499", "#999933",
                  "#882255", "#661100", "#6699CC", "#888888")
     if (nrow(isomers) > length(palette)){
-      set.seed()
+      set.seed(19580811)
       colors <- grDevices::colors()[grep('gr(a|e)y|white|light', grDevices::colors(), invert = T)]
       colors <- sample(colors, size = (nrow(isomers) - length(palette)))
       palette <- c(palette, colors)
@@ -231,7 +228,7 @@ plotFA <- function(msbatch, dmz, verbose = TRUE){
         } else if (nrow(eics[[startat]]) == 0 & startat < length(msbatch$msobjects)) {
           startat <- startat + 1
         } else {
-          if (verbose){cat("No peaks found")}
+          if(verbose){cat("No peaks found")}
           plot(0, xlim = c(iniRT, endRT), ylim = c(0, 100), type = "l", lwd = 2,
                col = scales::alpha("grey", 0.7),
                main = paste(fa, "; EIC: ", round(isomers$mz[p],3), "; RT: ",
@@ -291,7 +288,6 @@ plotFA <- function(msbatch, dmz, verbose = TRUE){
 #' @param faid data frame with 7 columns (ID, FAid, Adducts, mz, RT, iniRT and
 #' endRT) containing curated FAs.
 #' @param dmz mz tolerance in ppm.
-#' @param verbose print information messages.
 #'
 #' @description after FA annotation using \link{annotateFA}, the resulting
 #' data frame can be modified to remove rows with unwanted annotation, iniRT and
@@ -308,7 +304,6 @@ plotFA <- function(msbatch, dmz, verbose = TRUE){
 #'
 #' @examples
 #' \dontrun{
-#' # from the msbatch obtained using LipidMS R package
 #' msbatch <- annotateFA(msbatch, dmz = 5)
 #'
 #' plots <- plotFA(msbatch, dmz = 10)
@@ -327,7 +322,7 @@ plotFA <- function(msbatch, dmz, verbose = TRUE){
 #' }
 #'
 #' @author M Isabel Alcoriza-Balaguer <maribel_alcoriza@iislafe.es>
-curateFAannotations <- function(msbatch, faid, dmz = 10, verbose= TRUE){
+curateFAannotations <- function(msbatch, faid, dmz = 10){
 
 
   #============================================================================#
@@ -343,8 +338,7 @@ curateFAannotations <- function(msbatch, faid, dmz = 10, verbose= TRUE){
 
 
   if (any(duplicated(faid$FAid))){
-    if(verbose){cat(paste(unique(faid$FAid[duplicated(faid$FAid)]), 
-                          collapse=", "), "duplicated.")}
+    message(paste(unique(faid$FAid[duplicated(faid$FAid)]), collapse=", "), "duplicated.")
     stop("Compound names (FAid column) must be unique.")
   }
   if (any(duplicated(faid$ID) & !is.na(faid$ID))){
@@ -634,8 +628,6 @@ searchIS <- function(msbatch, mz, rt, minRT, maxRT, dmz = 10){
 #'
 #' @examples
 #' \dontrun{
-#' # from the msbatch obtained using LipidMS R package and annotated with 
-#' # annotateFA()
 #' fadata <- searchFAisotopes(msbatch, dmz = 10, coelCutoff = 0.4)
 #' }
 #'
@@ -853,12 +845,14 @@ readfadatafile <- function(file, sep = ",", dec = "."){
 #'
 #' @return corrected fadata.
 #' 
-#' @references Su X, Lu W, Rabinowitz J (2017). “Metabolite Spectral Accuracy on 
-#' Orbitraps.” Analytical Chemistry, 89(11), 5940-5948, PMID: 28471646, R package 
+#' @references Su X, Lu W, Rabinowitz J (2017). Metabolite Spectral Accuracy on 
+#' Orbitraps. Analytical Chemistry, 89(11), 5940-5948, PMID: 28471646, R package 
 #' version 0.2.4 (2021), <https://doi.org/10.1021/acs.analchem.7b00396>. 
 #'
 #' @examples
-#' ssdata <- dataCorrection(ssexamplefadata, blankgroup = "Blank")
+#' \donttest{
+#' ssdata <- dataCorrection(ssexamplefadata, blankgroup="Blank")
+#' }
 #'
 #' @author M Isabel Alcoriza-Balaguer <maribel_alcoriza@iislafe.es>
 dataCorrection <-function(fadata,
@@ -883,8 +877,7 @@ dataCorrection <-function(fadata,
   #============================================================================#
   if (correct13C){
     if(verbose){cat("Data correction for natural abundance of 13C...")}
-    fadata <- correctNatAb13C(fadata, resolution = resolution, 
-                              purity = purity13C)
+    fadata <- correctNatAb13C(fadata, resolution = resolution, purity = purity13C)
     if(verbose){cat("OK\n")}
   }
   if ("IS" %in% names(fadata)){
@@ -894,8 +887,7 @@ dataCorrection <-function(fadata,
   }
   if (length(blankgroup) > 0){
     if(verbose){cat("Blank substraction...")}
-    fadata <- blankSubstraction(fadata, blankgroup = blankgroup, 
-                                verbose = verbose)
+    fadata <- blankSubstraction(fadata, blankgroup = blankgroup, verbose = verbose)
     if(verbose){cat("OK\n")}
   }
   if (length(externalnormalization) > 0){
@@ -1031,11 +1023,11 @@ correctNatAb13C <- function(fadata, resolution = 140000, purity = 0.99){
     fa <- fadata$intensities[ss[order(fadata$fattyacids$Label[ss])],, drop = FALSE]
     label <- fadata$fattyacids$Label[ss[order(fadata$fattyacids$Label[ss])]]
     corrected <- accucor::carbon_isotope_correction(formula = form,
-                                                    datamatrix = as.matrix(fa),
-                                                    label = label,
-                                                    Resolution = resolution,
-                                                    purity = purity,
-                                                    ReportPoolSize = FALSE)
+                                                     datamatrix = as.matrix(fa),
+                                                     label = label,
+                                                     Resolution = resolution,
+                                                     purity = purity,
+                                                     ReportPoolSize = FALSE)
     CorrMatrix <- rbind(CorrMatrix, corrected)
   }
   CorrMatrix <- data.frame(CorrMatrix)

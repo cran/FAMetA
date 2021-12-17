@@ -28,13 +28,13 @@ Obtain result tables and heatmaps that help interpreting your results.
 }
 \examples{
 \donttest{
-ssdata <- dataCorrection(ssexamplefadata, blankgroup = "Blank")
-ssdata <- synthesisAnalysis(ssdata, R2Thr = 0.95, 
-maxiter = 1e3, maxconvergence = 100, startpoints = 5)
-ssdata <- elongationAnalysis(ssdata, R2Thr = 0.95, maxiter = 1e3,
+ssdata <- dataCorrection(ssexamplefadata, blankgroup="Blank")
+ssdata <- synthesisAnalysis(ssdata, R2Thr = 0.95, maxiter = 1e3,
+maxconvergence = 100, startpoints = 5)
+ssdata <- elongationAnalysis(ssdata, R2Thr = 0.95, maxiter = 1e4,
 maxconvergence=100, startpoints = 5, D2Thr = 0.1)
 ssdata <- desaturationAnalysis(ssdata, SEThr = 0.05)
-ssdata <- summarizeResults(ssdata, controlgroup = "Control13Cglc")
+ssdata <- summarizeResults(ssdata)
 }
 
 \dontrun{
@@ -42,7 +42,7 @@ fadata <- dataCorrection(examplefadata, blankgroup = "Blank")
 fadata <- synthesisAnalysis(fadata, R2Thr = 0.95, maxiter = 1e3,
 maxconvergence = 100, startpoints = 5)
 fadata <- elongationAnalysis(fadata, R2Thr = 0.95, maxiter = 1e4,
-maxconvergence = 100, startpoints = 5, D2Thr = 0.1)
+maxconvergence=100, startpoints = 5, D2Thr = 0.1)
 fadata <- desaturationAnalysis(fadata, SEThr = 0.05)
 fadata <- summarizeResults(fadata, controlgroup = "Control13Cglc")
 }

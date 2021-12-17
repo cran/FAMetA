@@ -2,10 +2,10 @@
 \alias{ssexamplefadata}
 \docType{data}
 \title{
-Toy example.
+Toy example fadata list.
 }
 \description{
-Example fadata list.
+Toy example fadata list.
 }
 \usage{data("ssexamplefadata")}
 \format{

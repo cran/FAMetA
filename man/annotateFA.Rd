@@ -27,7 +27,6 @@ FA annotation
 }
 \examples{
 \dontrun{
-# from the msbatch obtained using LipidMS R package
 msbatch <- annotateFA(msbatch, dmz = 5)
 }
 

@@ -41,9 +41,9 @@
 #'
 #' @examples
 #' \donttest{
-#' ssdata <- dataCorrection(ssexamplefadata, blankgroup = "Blank")
-#' ssdata <- synthesisAnalysis(ssdata, R2Thr = 0.95, 
-#' maxiter = 1e3, maxconvergence = 100, startpoints = 5)
+#' ssdata <- dataCorrection(ssexamplefadata, blankgroup="Blank")
+#' ssdata <- synthesisAnalysis(ssdata, R2Thr = 0.95, maxiter = 1e3,
+#' maxconvergence = 100, startpoints = 5)
 #' }
 #' 
 #' \dontrun{
@@ -55,8 +55,8 @@
 #' # D2 could be set as the one calculated for 13-Glc Control samples to improve
 #' # the results:
 #'
-#' # D2 <- fadata$synthesis$results$D2[examplefadata$synthesis$results$FA == "FA(16:0)"]
-#' # fadata$synthesis$results$Group[examplefadata$synthesis$results$FA == "FA(16:0)"]
+#' # D2 <- fadata$synthesis$results$D2[fadata$synthesis$results$FA == "FA(16:0)"]
+#' # fadata$synthesis$results$Group[fadata$synthesis$results$FA == "FA(16:0)"]
 #'
 #' # D2[4:12] <- rep(mean(D2[1:3]))
 #'
@@ -75,7 +75,7 @@ synthesisAnalysis <- function(fadata,
                         P = NA,
                         startpoints = 5,
                         parameters = FAMetA::parameters,
-                        propagateD = TRUE,
+                        propagateD = TRUE, 
                         verbose = TRUE){
 
   #============================================================================#
@@ -118,7 +118,8 @@ synthesisAnalysis <- function(fadata,
                                        R2Thr = R2Thr, maxiter = maxiter,
                                        maxconvergence = maxconvergence,
                                        D1 = D1, D2 = D2, P = P,
-                                       startpoints = startpoints)
+                                       startpoints = startpoints,
+                                       verbose = verbose)
       if (length(toDo2) > 0){
         toDo14 <- toDo2[grep("FA\\(16", toDo2, invert = TRUE)]
         if (length(toDo14) > 0){
@@ -137,13 +138,14 @@ synthesisAnalysis <- function(fadata,
             D2 <- inputD2
             P <- inputP
           }
-          elo_14 <- runSynthesisAnalysis(fadata = fadata, toDo = toDo14,
-                                              R2Thr = R2Thr, maxiter = maxiter,
-                                              maxconvergence = maxconvergence,
-                                              D1 = D1, D2 = D2, P = P,
-                                              startpoints = startpoints)
+          synt_14 <- runSynthesisAnalysis(fadata = fadata, toDo = toDo14,
+                                          R2Thr = R2Thr, maxiter = maxiter,
+                                          maxconvergence = maxconvergence,
+                                          D1 = D1, D2 = D2, P = P,
+                                          startpoints = startpoints,
+                                          verbose = verbose)
         } else {
-          elo_14 <- list()
+          synt_14 <- list()
         }
 
         toDo16 <- toDo2[grep("FA\\(16", toDo2)]
@@ -163,48 +165,48 @@ synthesisAnalysis <- function(fadata,
             D2 <- inputD2
             P <- inputP
           }
-          elo_16 <- runSynthesisAnalysis(fadata = fadata, toDo = toDo16,
+          synt_16 <- runSynthesisAnalysis(fadata = fadata, toDo = toDo16,
                                          R2Thr = R2Thr, maxiter = maxiter,
                                          maxconvergence = maxconvergence,
                                          D1 = D1, D2 = D2, P = P,
                                          startpoints = startpoints,
-                                         parameters = parameters, 
+                                         parameters = parameters,
                                          verbose = verbose)
         } else {
-          elo_16 <- list()
+          synt_16 <- list()
         }
 
-        if (length(elo_14) > 0 & length(elo_16) > 0){
+        if (length(synt_14) > 0 & length(synt_16) > 0){
           results <- list()
-          results$fas <- c(results1$fas, elo_14$fas, elo_16$fas)
+          results$fas <- c(results1$fas, synt_14$fas, synt_16$fas)
           results$results <- data.frame(rbind(results1$results,
-                                              elo_14$results,
-                                              elo_16$results))
+                                              synt_14$results,
+                                              synt_16$results))
           results$predictedValues <- data.frame(rbind(results1$predictedValues,
-                                                      elo_14$predictedValues,
-                                                      elo_16$predictedValues))
-          results$plots <- c(results1$plots, elo_14$plots, elo_16$plots)
-          results$details <- c(results1$details, elo_14$details, elo_16$details)
+                                                      synt_14$predictedValues,
+                                                      synt_16$predictedValues))
+          results$plots <- c(results1$plots, synt_14$plots, synt_16$plots)
+          results$details <- c(results1$details, synt_14$details, synt_16$details)
         } else {
-          if (length(elo_14) > 0){
+          if (length(synt_14) > 0){
             results <- list()
-            results$fas <- c(results1$fas, elo_14$fas)
+            results$fas <- c(results1$fas, synt_14$fas)
             results$results <- data.frame(rbind(results1$results,
-                                                elo_14$results))
+                                                synt_14$results))
             results$predictedValues <- data.frame(rbind(results1$predictedValues,
-                                                        elo_14$predictedValues))
-            results$plots <- c(results1$plots, elo_14$plots)
-            results$details <- c(results1$details, elo_14$details)
+                                                        synt_14$predictedValues))
+            results$plots <- c(results1$plots, synt_14$plots)
+            results$details <- c(results1$details, synt_14$details)
           } else {
             results <- list()
-            results$fas <- c(results1$fas, elo_16$fas)
+            results$fas <- c(results1$fas, synt_16$fas)
             results$results <- data.frame(rbind(results1$results,
-                                                elo_16$results))
+                                                synt_16$results))
             results$predictedValues <- data.frame(rbind(results1$predictedValues,
-                                                    elo_16$predictedValues))
-            results$plots <- c(results1$plots, elo_16$plots)
+                                                    synt_16$predictedValues))
+            results$plots <- c(results1$plots, synt_16$plots)
 
-            results$details <- c(results1$details, elo_16$details)
+            results$details <- c(results1$details, synt_16$details)
           }
         }
       } else {
@@ -259,10 +261,10 @@ synthesisAnalysis <- function(fadata,
 #'
 #' @examples
 #' \donttest{
-#' ssdata <- dataCorrection(ssexamplefadata, blankgroup = "Blank")
-#' ssdata <- synthesisAnalysis(ssdata, R2Thr = 0.95, 
-#' maxiter = 1e3, maxconvergence = 100, startpoints = 5)
-#' ssdata <- elongationAnalysis(ssdata, R2Thr = 0.95, maxiter = 1e3,
+#' ssdata <- dataCorrection(ssexamplefadata, blankgroup="Blank")
+#' ssdata <- synthesisAnalysis(ssdata, R2Thr = 0.95, maxiter = 1e3,
+#' maxconvergence = 100, startpoints = 5)
+#' ssdata <- elongationAnalysis(ssdata, R2Thr = 0.95, maxiter = 1e4,
 #' maxconvergence=100, startpoints = 5, D2Thr = 0.1)
 #' }
 #' 
@@ -276,9 +278,8 @@ synthesisAnalysis <- function(fadata,
 #'
 #' @author M Isabel Alcoriza-Balaguer <maribel_alcoriza@iislafe.es>
 elongationAnalysis <- function(fadata, R2Thr = 0.98, maxiter = 1e4,
-                         maxconvergence = 100, startpoints = 5, D2Thr = 0.1,
-                         parameters = FAMetA::parameters,
-                         verbose = TRUE){
+                         maxconvergence=100, startpoints=5, D2Thr = 0.1,
+                         parameters = FAMetA::parameters, verbose = TRUE){
 
   #============================================================================#
   # Check arguments
@@ -376,10 +377,10 @@ elongationAnalysis <- function(fadata, R2Thr = 0.98, maxiter = 1e4,
 
     predictedValues <- data.frame(do.call(rbind, lapply(resultsElong, function(x)
       do.call(cbind, lapply(x$models, function(y) if (!any(is.na(y))){predict(y)}else{rep(NA, nrow(x$mid))})))))
-    predictedValues <- data.frame(cbind(fadata$fattyacids[fadata$fattyacids$Compound %in% toDo,],
-                         predictedValues))
-    rownames(predictedValues) <- paste(fadata$fattyacids$Compound[fadata$fattyacids$Compound %in% toDo]
-                                   , "_M+", fadata$fattyacids$Label[fadata$fattyacids$Compound %in% toDo], sep="")
+    compounds <- do.call(rbind, lapply(resultsElong, function(x) x[[2]][,c("Compound", "Label")]))
+    predictedValues <- cbind(compounds, predictedValues)
+    rownames(predictedValues) <- paste(predictedValues$Compound, "_M+", 
+                                       predictedValues$Label, sep="")
 
   } else {
     stop("Unable to run EIA")
@@ -425,10 +426,10 @@ elongationAnalysis <- function(fadata, R2Thr = 0.98, maxiter = 1e4,
 #'
 #' @examples
 #' \donttest{
-#' ssdata <- dataCorrection(ssexamplefadata, blankgroup = "Blank")
-#' ssdata <- synthesisAnalysis(ssdata, R2Thr = 0.95, 
-#' maxiter = 1e3, maxconvergence = 100, startpoints = 5)
-#' ssdata <- elongationAnalysis(ssdata, R2Thr = 0.95, maxiter = 1e3,
+#' ssdata <- dataCorrection(ssexamplefadata, blankgroup="Blank")
+#' ssdata <- synthesisAnalysis(ssdata, R2Thr = 0.95, maxiter = 1e3,
+#' maxconvergence = 100, startpoints = 5)
+#' ssdata <- elongationAnalysis(ssdata, R2Thr = 0.95, maxiter = 1e4,
 #' maxconvergence=100, startpoints = 5, D2Thr = 0.1)
 #' ssdata <- desaturationAnalysis(ssdata, SEThr = 0.05)
 #' }
@@ -438,7 +439,7 @@ elongationAnalysis <- function(fadata, R2Thr = 0.98, maxiter = 1e4,
 #' fadata <- synthesisAnalysis(fadata, R2Thr = 0.95, maxiter = 1e3,
 #' maxconvergence = 100, startpoints = 5)
 #' fadata <- elongationAnalysis(fadata, R2Thr = 0.95, maxiter = 1e4,
-#' maxconvergence = 100, startpoints = 5, D2Thr = 0.1)
+#' maxconvergence=100, startpoints = 5, D2Thr = 0.1)
 #' fadata <- desaturationAnalysis(fadata, SEThr = 0.05)
 #' }
 #'
@@ -549,13 +550,13 @@ desaturationAnalysis <- function(fadata,
 #'
 #' @examples
 #' \donttest{
-#' ssdata <- dataCorrection(ssexamplefadata, blankgroup = "Blank")
-#' ssdata <- synthesisAnalysis(ssdata, R2Thr = 0.95, 
-#' maxiter = 1e3, maxconvergence = 100, startpoints = 5)
-#' ssdata <- elongationAnalysis(ssdata, R2Thr = 0.95, maxiter = 1e3,
+#' ssdata <- dataCorrection(ssexamplefadata, blankgroup="Blank")
+#' ssdata <- synthesisAnalysis(ssdata, R2Thr = 0.95, maxiter = 1e3,
+#' maxconvergence = 100, startpoints = 5)
+#' ssdata <- elongationAnalysis(ssdata, R2Thr = 0.95, maxiter = 1e4,
 #' maxconvergence=100, startpoints = 5, D2Thr = 0.1)
 #' ssdata <- desaturationAnalysis(ssdata, SEThr = 0.05)
-#' ssdata <- summarizeResults(ssdata, controlgroup = "Control13Cglc")
+#' ssdata <- summarizeResults(ssdata)
 #' }
 #' 
 #' \dontrun{
@@ -563,7 +564,7 @@ desaturationAnalysis <- function(fadata,
 #' fadata <- synthesisAnalysis(fadata, R2Thr = 0.95, maxiter = 1e3,
 #' maxconvergence = 100, startpoints = 5)
 #' fadata <- elongationAnalysis(fadata, R2Thr = 0.95, maxiter = 1e4,
-#' maxconvergence = 100, startpoints = 5, D2Thr = 0.1)
+#' maxconvergence=100, startpoints = 5, D2Thr = 0.1)
 #' fadata <- desaturationAnalysis(fadata, SEThr = 0.05)
 #' fadata <- summarizeResults(fadata, controlgroup = "Control13Cglc")
 #' }
@@ -613,7 +614,7 @@ summarizeResults <- function(fadata, controlgroup = NA,
                "#44AA99", "#332288", "#AA4499", "#999933",
                "#882255", "#661100", "#6699CC", "#888888")
   if (length(unique(fadata$metadata$sampletype)) > length(palette)){
-    set.seed()
+    set.seed(19580811)
     colors <- grDevices::colors()[grep('gr(a|e)y|white|light', grDevices::colors(), invert = T)]
     colors <- sample(colors, size = (length(unique(fadata$metadata$sampletype)) - length(palette)))
     palette <- c(palette, colors)
@@ -727,7 +728,7 @@ summarizeResults <- function(fadata, controlgroup = NA,
   
   S16 <- df
   rownames(S16) <- df$FA
-  S16 <- S16[,!grepl("FA", colnames(S16))]
+  S16 <- S16[,colnames(S16) != "FA"]
   results$allparameters$S16 <- S16
   
   
@@ -740,7 +741,7 @@ summarizeResults <- function(fadata, controlgroup = NA,
                                          values_from = "E1"))
     E1 <- df
     rownames(E1) <- df$FA
-    E1 <- E1[,!grepl("FA", colnames(E1))]
+    E1 <- E1[,colnames(E1) != "FA"]
     results$allparameters$E1 <- E1
     
     
@@ -751,7 +752,7 @@ summarizeResults <- function(fadata, controlgroup = NA,
                                     values_from = "E2"))
     E2 <- df
     rownames(E2) <- df$FA
-    E2 <- E2[,!grepl("FA", colnames(E1))]
+    E2 <- E2[,colnames(E2) != "FA"]
     results$allparameters$E2 <- E2
     
     
@@ -762,7 +763,7 @@ summarizeResults <- function(fadata, controlgroup = NA,
                                     values_from = "E3"))
     E3 <- df
     rownames(E3) <- df$FA
-    E3 <- E3[,!grepl("FA", colnames(E3))]
+    E3 <- E3[,colnames(E3) != "FA"]
     results$allparameters$E3 <- E3
     
     
@@ -773,7 +774,7 @@ summarizeResults <- function(fadata, controlgroup = NA,
                                     values_from = "E4"))
     E4 <- df
     rownames(E4) <- df$FA
-    E4 <- E4[,!grepl("FA", colnames(E4))]
+    E4 <- E4[,colnames(E4) != "FA"]
     results$allparameters$E4 <- E4
     
     
@@ -784,7 +785,7 @@ summarizeResults <- function(fadata, controlgroup = NA,
                                     values_from = "E5"))
     E5 <- df
     rownames(E5) <- df$FA
-    E5 <- E5[,!grepl("FA", colnames(E5))]
+    E5 <- E5[,colnames(E5) != "FA"]
     results$allparameters$E5 <- E5
     
   }

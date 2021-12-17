@@ -2,7 +2,7 @@
 % Please edit documentation in R/internal.R
 \name{runSynthesisAnalysis}
 \alias{runSynthesisAnalysis}
-\title{run the synthesis analysis.}
+\title{run synthesis analysis.}
 \usage{
 runSynthesisAnalysis(
   fadata,
@@ -19,7 +19,9 @@ runSynthesisAnalysis(
 )
 }
 \arguments{
-\item{toDo}{FA to analyse.}
+\item{fadata}{fadata containing synthesis results.}
+
+\item{toDo}{fatty acids to analyse.}
 
 \item{R2Thr}{positive numeric between 0 and 1 specifying the minimum R2
 allowed for fits.}
@@ -30,30 +32,29 @@ specifying the maximum number of iterations allowed.}
 \item{maxconvergence}{positive integer specifying the maximum number of
 successes before choosing the winning model.}
 
-\item{D1}{positive numeric between 0 and 1 specifying the contribution of
-acetate M+1.}
+\item{D1}{positive numeric vector with values between 0 and 1 specifying the
+contribution of acetate M+1. If NA it is estimated.}
 
-\item{D2}{positive numeric between 0 and 1 specifying the contribution of
-acetate M+2.}
+\item{D2}{positive numeric vector with values between 0 and 1 specifying the
+contribution of acetate M+2. If NA it is estimated.}
 
-\item{P}{overdispersion parameter.}
+\item{P}{overdispersion parameter. If NA it is estimated (quasi-multinomial
+distribution). If set to 0, no overdispersion is assumed (multinomial
+distribution).}
 
 \item{startpoints}{positive integer specifying the number of starting points
 for each parameter to be estimated.}
 
 \item{parameters}{parameters to be estimated for each fatty acid. It can be
-modified to change them or to add new fatty acids.}
+modified to change them or to add new fatty acids (adding new rows).}
 
 \item{verbose}{print information messages.}
-
-\item{fa}{data frame with isotope intensities for a FA. First two columns
-correspond to Compound and Label information.}
 }
 \value{
-Elongation and importation analysis results.
+De novo-synthesis analysis results.
 }
 \description{
-run the synthesis analysis.
+run synthesis analysis.
 }
 \author{
 M Isabel Alcoriza-Balaguer <maribel_alcoriza@iislafe.es>

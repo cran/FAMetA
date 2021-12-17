@@ -21,8 +21,6 @@ Search FA isotopes
 }
 \examples{
 \dontrun{
-# from the msbatch obtained using LipidMS R package and annotated with 
-# annotateFA()
 fadata <- searchFAisotopes(msbatch, dmz = 10, coelCutoff = 0.4)
 }
 

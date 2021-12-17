@@ -21,7 +21,6 @@ Plot FA EICs
 }
 \examples{
 \dontrun{
-# from the msbatch obtained using LipidMS R package
 msbatch <- annotateFA(msbatch, dmz = 5)
 
 plots <- plotFA(msbatch, dmz = 10)

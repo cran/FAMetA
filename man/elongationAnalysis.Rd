@@ -57,10 +57,10 @@ FA(18:2)n6 and FA(18:3)n3 so that synthesis (S16:0) and first elongation step
 }
 \examples{
 \donttest{
-ssdata <- dataCorrection(ssexamplefadata, blankgroup = "Blank")
-ssdata <- synthesisAnalysis(ssdata, R2Thr = 0.95, 
-maxiter = 1e3, maxconvergence = 100, startpoints = 5)
-ssdata <- elongationAnalysis(ssdata, R2Thr = 0.95, maxiter = 1e3,
+ssdata <- dataCorrection(ssexamplefadata, blankgroup="Blank")
+ssdata <- synthesisAnalysis(ssdata, R2Thr = 0.95, maxiter = 1e3,
+maxconvergence = 100, startpoints = 5)
+ssdata <- elongationAnalysis(ssdata, R2Thr = 0.95, maxiter = 1e4,
 maxconvergence=100, startpoints = 5, D2Thr = 0.1)
 }
 
