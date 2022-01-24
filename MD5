@@ -1,9 +1,9 @@
-f621de13e02f97ca931f0e6c258bd8f7 *DESCRIPTION
+f444097a3f6ce9235b1fdec91d4b2b9e *DESCRIPTION
 292a277e4c50e5323896ffb6c0f02093 *NAMESPACE
-e7c0fc7cbd47b6fb71c898e275099a85 *R/FAMetA.R
+830d266f3859eed7fff93f6dc052723a *R/FAMetA.R
 31ec5ca66ff10af11c6e1e7bad43b3fa *R/internal.R
 449b9b6d8434d19cde37b04307c5f9da *R/metabolicanalysis.R
-aee98233091832d573ab6ad37d2bd26f *R/processing.R
+412a3d1311ad0c733b6699a3d3c9d937 *R/processing.R
 733b1c09a0e5be553642af22927ae24d *build/vignette.rds
 782a7c7b527ccd8298baf42f10230692 *data/desaturationsdb.rda
 fe8fb08d8111adced9d48fc055244f71 *data/examplefadata.rda
