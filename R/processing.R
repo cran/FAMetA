@@ -167,11 +167,11 @@ plotFA <- function(msbatch, dmz, verbose = TRUE){
       peaks[[p]] <- list()
     }
     for (p in 1:nrow(isomers)){
-      iniRT <- isomers$iniRT[p]
-      endRT <- isomers$endRT[p]
+      iniRT2 <- isomers$iniRT[p]
+      endRT2 <- isomers$endRT[p]
       for (s in 1:length(msbatch$msobjects)){
         e <- eics[[s]]
-        e <- e[e$RT >= iniRT & e$RT <= endRT,]
+        e <- e[e$RT >= iniRT2 & e$RT <= endRT2,]
         if (nrow(e) > 0){
           peaks[[p]][[s]] <- e[order(e$RT), c("RT", "int")]
         } else {
@@ -217,6 +217,7 @@ plotFA <- function(msbatch, dmz, verbose = TRUE){
           smt$y[smt$y < 0] <- 0
 
           plot(smt$x, smt$y, type = "l", lwd = 2, ylim = c(0, maxint),
+               xlim = c(iniRT, endRT),
                col = scales::alpha("grey", 0.7),
                main = paste("ID: ", isomers$ID[p], "; ", fa, "; EIC: ",
                             round(isomers$mz[p],3), "; RT: ",

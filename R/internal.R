@@ -523,12 +523,16 @@ runElongationAnalysis <- function(fa, M, D1, D2, P, S16, E1, E2, E3, E4, E5, R2T
                          E2=SE[[3]], E3=SE[[4]], E4=SE[[5]], E5=SE[[6]],
                        M=M, vcomb16=vcomb16, mcombe=mcombe)
     datanls$resp <- resp
-
-    if (D2[s]+D1[s]*0.5 >= D2Thr){
-      if (!all(resp == rep(0, M+1)) | any(unlist(lapply(SE[2:6], is.na)))){
-        model <- tryCatch({estimatePars(formula, gridStart, datanls,
-                                        maxiter = maxiter, maxconvergence=maxconvergence)},
-                          error = function(e){NULL})
+    
+    if (!any(is.na(c(D2[s], D1[s], P[s])))){
+      if (D2[s]+D1[s]*0.5 >= D2Thr){
+        if (!all(resp == rep(0, M+1)) | any(unlist(lapply(SE[2:6], is.na)))){
+          model <- tryCatch({estimatePars(formula, gridStart, datanls,
+                                          maxiter = maxiter, maxconvergence=maxconvergence)},
+                            error = function(e){NULL})
+        } else {
+          model <- NULL
+        }
       } else {
         model <- NULL
       }
@@ -587,47 +591,49 @@ runElongationAnalysis <- function(fa, M, D1, D2, P, S16, E1, E2, E3, E4, E5, R2T
 #' @author M Isabel Alcoriza-Balaguer <maribel_alcoriza@iislafe.es>
 checkparameters <- function(resp, M, n, SE, imported, D2){
   
-  if (D2 >= 0.4){
-    if (!imported & (sum(resp[seq(2*n+3, M+1, 2)] > 0.0001) >= 3 | 
-                     sum(resp[seq(2*n+3, M+1, 2)] > 0.001) >= 2)){  
-      #floor(0.33*length(resp[seq(2*n+3, M+1, 2)]))
-      SE[[1]] <- NA
-    } else {
-      SE[[1]] <- 0
-    }
-    if (!is.na(SE[[1]])){
-      if (resp[2*n+1] > 0.001){
-        SE[[2]] <- NA
+  if (!is.na(D2)){
+    if (D2 >= 0.4){
+      if (!imported & (sum(resp[seq(2*n+3, M+1, 2)] > 0.0001) >= 3 | 
+                       sum(resp[seq(2*n+3, M+1, 2)] > 0.001) >= 2)){  
+        #floor(0.33*length(resp[seq(2*n+3, M+1, 2)]))
+        SE[[1]] <- NA
       } else {
-        SE[[2]] <- 0
+        SE[[1]] <- 0
       }
-    }
-    if (!is.na(SE[[2]]) & n > 1){
-      if (resp[2*(n-1)+1] > 0.001){
-        SE[[3]] <- NA
-      } else {
-        SE[[3]] <- 0
+      if (!is.na(SE[[1]])){
+        if (resp[2*n+1] > 0.001){
+          SE[[2]] <- NA
+        } else {
+          SE[[2]] <- 0
+        }
       }
-    }
-    if (!is.na(SE[[3]]) & n > 2){
-      if (resp[2*(n-2)+1] > 0.001){
-        SE[[4]] <- NA
-      } else {
-        SE[[4]] <- 0
+      if (!is.na(SE[[2]]) & n > 1){
+        if (resp[2*(n-1)+1] > 0.001){
+          SE[[3]] <- NA
+        } else {
+          SE[[3]] <- 0
+        }
       }
-    }
-    if (!is.na(SE[[4]]) & n > 3){
-      if (resp[2*(n-3)+1] > 0.001){
-        SE[[5]] <- NA
-      } else {
-        SE[[5]] <- 0
+      if (!is.na(SE[[3]]) & n > 2){
+        if (resp[2*(n-2)+1] > 0.001){
+          SE[[4]] <- NA
+        } else {
+          SE[[4]] <- 0
+        }
       }
-    }
-    if (!is.na(SE[[5]]) & n > 4){
-      if (resp[2*(n-4)+1] > 0.001){
-        SE[[6]] <- NA
-      } else {
-        SE[[6]] <- 0
+      if (!is.na(SE[[4]]) & n > 3){
+        if (resp[2*(n-3)+1] > 0.001){
+          SE[[5]] <- NA
+        } else {
+          SE[[5]] <- 0
+        }
+      }
+      if (!is.na(SE[[5]]) & n > 4){
+        if (resp[2*(n-4)+1] > 0.001){
+          SE[[6]] <- NA
+        } else {
+          SE[[6]] <- 0
+        }
       }
     }
   }
@@ -1082,9 +1088,15 @@ getResultsTable <- function(fadata, parameters = FAMetA::parameters){
     for (fa in fadata$elongation$fas){
       param <- parameters[parameters$FattyAcid == fa,]
       params <- c("FA", "Sample", "Group", "D0", "D1", "D2", "P",
-                  tail(names(param)[param == 1], n=1), "I")
+                    tail(names(param)[param == 1], n=1), "I")
       newresult <- fadata$elongation$results[fadata$elongation$results$FA == fa,
                                              params, drop=FALSE]
+      if (fa %in% c("FA(18:2)n6", "FA(18:3)n3", "FA(18:3)n6")){ # these FA are never considered endogenously synthesized
+        if ("E1" %in% params){
+          newresult["E1"] <- NA
+          newresult["I"] <- 1
+        }
+      }
       if (ncol(newresult) == 9){
         colnames(newresult) <- c("FA", "Sample", "Group", "D0", "D1", "D2", "P",
                                  "E", "I")
@@ -1103,7 +1115,6 @@ getResultsTable <- function(fadata, parameters = FAMetA::parameters){
     }
   }
   return(resultstable)
-
 }
 
 
