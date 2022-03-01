@@ -1,11 +1,11 @@
-fe864807b7c5e7f28402da6d36700b2b *DESCRIPTION
+c9c05458a58d5d5197caee6d37c8f650 *DESCRIPTION
 292a277e4c50e5323896ffb6c0f02093 *NAMESPACE
-b5cc9df460b94b62dfef6f65a9dfe3f4 *R/FAMetA.R
-b26bc1ff3cab5305a915535d400245a1 *R/internal.R
-b43299a3d5a22f62c93ae95b4c57a0d2 *R/metabolicanalysis.R
-037817a28051f3f32fdeaa56d2695230 *R/processing.R
+7594f4d9d4498384123bb8c70c34f770 *R/FAMetA.R
+81363486d8d27213e4183c1ccdb526bd *R/internal.R
+7e388a9ca184018e8af36bd013eb82f8 *R/metabolicanalysis.R
+34b26546ffd122ed639ef66ffbdf07a9 *R/processing.R
 733b1c09a0e5be553642af22927ae24d *build/vignette.rds
-7d46efce6912484015c74e919f4fc780 *data/desaturationsdb.rda
+65bb195236d531947388dd32924d4543 *data/desaturationsdb.rda
 fe8fb08d8111adced9d48fc055244f71 *data/examplefadata.rda
 1603332b7c0f783719247a8d7e62f05a *data/fattyacidsdb.rda
 da89b7664183da5c0a5859dfc3ce2144 *data/parameters.rda
@@ -25,7 +25,7 @@ f19d52badec1b2c97d83a0c99156edb2 *man/curateFAannotations.Rd
 db597ea94cefc657bbd031232371d18b *man/dataElong.Rd
 b85e079dad8690ff2ecf7f5f854d8cef *man/dataSynth.Rd
 3b44fa3015bc466f28648acad3779970 *man/desaturationAnalysis.Rd
-95a3723f4717f14693c78897e039e902 *man/desaturationsdb.Rd
+68b6b628f6602da2f72e3c61279e9f5d *man/desaturationsdb.Rd
 660853783b7ded04840cff03df6b4d53 *man/elongationAnalysis.Rd
 1b42ff946bf2e107908287d7825ee901 *man/elongationqmult.Rd
 7fa5ad9f7861bcacc24a4dc7a3a401ed *man/estimatePars.Rd
